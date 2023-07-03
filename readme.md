@@ -1,4 +1,5 @@
-Steps Followed in AKS: 
+<h3>Spark on AKS</h3>
+<h5>Steps Followed in AKS:</h5>h5> 
 
 	1. Create the Spark Docker file 
 	2. Build the image in your local (docker build image_name:tag_name)
@@ -13,14 +14,18 @@ Steps Followed in AKS:
 	11. Check if the pods are up (kubectl get pods) 
 	12. Expose the port of spark to access the UI (kubectl port-forward <pod_name> 4040:4040)
 
-Read more about :
+<h5> Read more about :</h5>
 
-Pools
-Namespace
-System Node Pool 
-There is usually an infrastructure RG created along the cluster RG which holds the infra details of the cluster
+	1. Pools
+	2. Namespace
+	3. System Node Pool 
 
-Helping commands in Kubeclt: (to be updated) 
-kubectl describe pod spark-job-858dd98915d1d7f0-driver
-kubectl auth can-i create pod
-kubectl get rolebinding default-pods-rolebinding -n default
+<h5> Bits :</h5>h5> 
+	
+ 	1. There is usually an infrastructure RG created along the cluster RG which holds the infra details of the cluster
+
+<h5>Essential commands in Kubeclt:</h5>(to be updated) 
+	
+ 	1. kubectl describe pod spark-job-858dd98915d1d7f0-driver
+	2. kubectl auth can-i create pod
+	3. kubectl get rolebinding default-pods-rolebinding -n default
