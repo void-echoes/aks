@@ -51,7 +51,7 @@ RUN mkdir -p /opt/spark/work && chmod -R 777 /opt/spark/work
 EXPOSE 4040 6066 7077 8080
 WORKDIR /tmp
 WORKDIR /opt/spark/conf
-#COPY /config/spark-defaults.conf .
+COPY /spark-defaults.conf .
 #RUN chmod 777 /opt/spark/bin/spark-class
 
 CMD ["/bin/bash"]
