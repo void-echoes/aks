@@ -22,3 +22,5 @@ There is usually an infrastructure RG created along the cluster RG which holds t
 
 Helping commands in Kubeclt: (to be updated) 
 kubectl describe pod spark-job-858dd98915d1d7f0-driver
+kubectl auth can-i create pod
+kubectl get rolebinding default-pods-rolebinding -n default
