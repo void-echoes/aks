@@ -1,5 +1,5 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Pod
 metadata:
   name: spark-cluster
 spec:
@@ -12,13 +12,15 @@ spec:
       labels:
         app: spark
     spec:
+      restartPolicy: OnFailure
       containers:
         - name: spark-driver
           image: acrdevd.azurecr.io/spark:preprod
           ports:
             - containerPort: 4040
+
           command: ["/opt/spark/bin/spark-submit"]
-          args: ["--master", "local", "--class", "org.apache.spark.examples.SparkPi", "local:/opt/spark/examples/jars/spark-examples_2.12-3.3.2.jar", "1000"]
+          args: ["--master", "local", "--class", "org.apache.spark.examples.SparkPi", "--ui-retained", "local:/opt/spark/examples/jars/spark-examples_2.12-3.3.2.jar", "1000"]
           env:
             - name: SPARK_DRIVER_HOST
               valueFrom:
@@ -30,8 +32,4 @@ spec:
             requests:
               memory: "1Gi"
               cpu: "0.5"
-          lifecycle:
-            preStop:
-              exec:
-                command: [ "/bin/sh", "-c", "sleep 900" ]
 
