@@ -1,5 +1,5 @@
 <h3>Spark on AKS</h3>
-<h5>Steps Followed in AKS:</h5>h5> 
+<h5>Steps Followed in AKS:</h5>
 
 	1. Create the Spark Docker file 
 	2. Build the image in your local (docker build image_name:tag_name)
