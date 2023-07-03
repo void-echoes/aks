@@ -14,9 +14,9 @@ spec:
     spec:
       containers:
         - name: spark-driver
-          image: test:test123
+          image: acrdevd.azurecr.io/test:test123
           command: ["/opt/spark/bin/spark-submit"]
-          args: ["--master", "spark://spark-master:7077", "--class", "org.apache.spark.examples.SparkPi", "local:/opt/spark/examples/jars/spark-examples_2.12-<spark-version>.jar", "1000"]
+          args: ["--master", "spark://spark-master:7077", "--class", "org.apache.spark.examples.SparkPi", "local:/opt/spark/examples/jars/spark-examples_2.12-3.3.2.jar", "1000"]
           env:
             - name: SPARK_DRIVER_HOST
               valueFrom:
