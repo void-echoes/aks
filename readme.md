@@ -20,7 +20,7 @@
 	2. Namespace
 	3. System Node Pool 
 
-<h5> Bits :</h5>h5> 
+<h5> Bits :</h5>
 	
  	1. There is usually an infrastructure RG created along the cluster RG which holds the infra details of the cluster
 
