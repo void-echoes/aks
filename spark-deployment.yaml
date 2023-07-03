@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-cluster
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spark
+  template:
+    metadata:
+      labels:
+        app: spark
+    spec:
+      containers:
+        - name: spark-driver
+          image: <driver-image>:<tag>
+          command: ["/opt/spark/bin/spark-submit"]
+          args: ["--master", "spark://spark-master:7077", "--class", "org.apache.spark.examples.SparkPi", "local:/opt/spark/examples/jars/spark-examples_2.12-<spark-version>.jar", "1000"]
+          env:
+            - name: SPARK_DRIVER_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: SPARK_MASTER
+              value: spark://spark-master:7077
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "0.5"
