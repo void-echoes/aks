@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: spark-driver
-          image: <driver-image>:<tag>
+          image: test:test123
           command: ["/opt/spark/bin/spark-submit"]
           args: ["--master", "spark://spark-master:7077", "--class", "org.apache.spark.examples.SparkPi", "local:/opt/spark/examples/jars/spark-examples_2.12-<spark-version>.jar", "1000"]
           env:
