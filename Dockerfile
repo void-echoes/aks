@@ -44,7 +44,6 @@ ENV SPARK_LOG_DIR=/opt/spark/logs
 RUN mkdir -p ${SPARK_LOG_DIR}
 RUN chmod 777 /opt/spark/bin/spark-class
 RUN mkdir -p /metastore_db && chmod -R 777 /metastore_db
-#spark.read.parquet("abfss://osa@csusprodprocessing.dfs.core.windows.net/hive/ap_na_prod_csrp_45740.db/element_latest").show(false)
 RUN mkdir -p /opt/spark/work && chmod -R 777 /opt/spark/work
 
 # Expose Spark ports
