@@ -1,0 +1,108 @@
+{{- $baseName := printf "%s-%s-%s" .Release.Name (split "-" .Release.Namespace)._1 (split "-" .Release.Namespace)._2 }}
+{{- $execSecretName := printf "%s-%s" $baseName "executor-env-secret" }}
+{{- $driverSecretName := printf "%s-%s" $baseName "driver-env-secret" }}
+{{- $sparkConfSecretName := printf "%s-%s" $baseName "spark-config-secret" }}
+{{- $configMapName := printf "%s-%s" $baseName "spark-config-map" }}
+{{- $appName := printf "%s-%s" $baseName "sparkapp" }}
+{{- $base := . -}}
+apiVersion: "sparkoperator.k8s.io/v1beta2"
+kind: SparkApplication
+metadata:
+  name: {{ $appName }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    rollme: {{ randAlphaNum 5 | quote }}
+spec:
+  type: {{ .Values.type }}
+  mode: {{ .Values.deployMode }}
+  image: "{{ .Values.image.registry }}/{{ .Values.image.name }}:{{ .Values.image.tag }}"
+  volumes:
+  - name: spark-config-volume
+    secret:
+      secretName: {{ $sparkConfSecretName }}
+  imagePullPolicy: {{ .Values.imagePullPolicy }}
+  imagePullSecrets: 
+  - {{ .Values.image.registry }}
+  {{- if eq .Values.type "Scala"}}
+  mainClass: {{ .Values.mainClass | quote }}
+  mainApplicationFile: {{ .Values.mainJar | quote }}
+  {{- else if eq .Values.type "Python"}}
+  mainApplicationFile: {{ .Values.mainPyFile | quote }}
+  pythonVersion: {{ .Values.pythonVersion | quote }}
+  {{- end }}
+  sparkVersion: {{ .Values.sparkVersion | quote }}
+  {{- if .Values.sparkArgs }}
+  arguments:
+  {{- .Values.sparkArgs | toYaml | nindent 4 }}
+  {{- end }}
+  restartPolicy:
+    type: {{ .Values.restartPolicy }}
+  {{- if .Values.sparkDepsConfig }}
+  deps: {{- .Values.sparkDepsConfig | toYaml | nindent 4 }}
+  {{- end }}
+  {{- if .Values.sparkDriverConfig }}
+  driver: 
+  {{- .Values.sparkDriverConfig | toYaml | nindent 4 }}
+  {{- if or (.Values.sparkDriverEnvConfig) (.Values.sparkDriverEnvSecrets) }}
+    env:
+    {{- if .Values.sparkDriverEnvConfig }}
+      {{- range $key,$val := .Values.sparkDriverEnvConfig }}
+      - name: {{ $key }}
+        value: {{ $val | quote }}
+      {{- end }}
+    {{- end }}
+    {{- if .Values.sparkDriverEnvSecrets }}
+      {{- range $key,$val := .Values.sparkDriverEnvSecrets }}
+      - name: {{ $key }}
+        valueFrom:
+          secretKeyRef:
+            {{- with $base}}
+            name: {{ $driverSecretName }}
+            {{- end }}
+            key: {{ $key }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  {{- end }}
+  {{- if .Values.sparkExecutorConfig }}
+  executor: 
+  {{- .Values.sparkExecutorConfig | toYaml | nindent 4 }}
+  {{- if or (.Values.sparkExecutorEnvConfig) (.Values.sparkExecutorEnvSecrets) }}
+    env:
+    {{- if .Values.sparkExecutorEnvConfig }}
+      {{- range $key,$val := .Values.sparkExecutorEnvConfig }}
+      - name: {{ $key }}
+        value: {{ $val | quote }}
+      {{- end }}
+    {{- end }}
+    volumeMounts:
+    - name: spark-config-exec
+      mountPath: "/etc/spark/conf"
+      readOnly: true
+    {{- if .Values.sparkExecutorEnvSecrets }}
+      {{- range $key,$val := .Values.sparkExecutorEnvSecrets }}
+      - name: {{ $key }}
+        valueFrom:
+          secretKeyRef:
+            {{- with $base}}
+            name: {{ $execSecretName }}
+            {{- end }}
+            key: {{ $key }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  {{- end }}
+  {{- if .Values.hadoopConf }}
+  sparkConfigMap: {{ $configMapName }}
+  {{- end }}
+  {{- if .Values.hadoopConf }}
+  hadoopConf: {{ .Values.hadoopConf | toYaml | nindent 4 }}
+  {{- end }}
+  {{- if .Values.sparkDynamicAllocation.enabled }}
+  dynamicAllocation:
+    enabled: {{ .Values.sparkDynamicAllocation.enabled }}
+    initialExecutors: {{ .Values.sparkDynamicAllocation.initialExecutors }}
+    minExecutors: {{ .Values.sparkDynamicAllocation.minExecutors }}
+    maxExecutors: {{ .Values.sparkDynamicAllocation.maxExecutors }}
+    shuffleTrackingTimeout: {{ .Values.sparkDynamicAllocation.shuffleTrackingTimeout }}
+  {{- end }}

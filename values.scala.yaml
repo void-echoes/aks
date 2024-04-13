@@ -1,0 +1,85 @@
+sparkVersion: 3.1.1
+
+
+image:
+  name: dummy
+  tag: v1.0.0
+  registry: cam3ron3
+
+imagePullPolicy: Always
+
+restartPolicy: Never
+
+type: Scala
+
+deployMode: cluster
+
+mainClass: org.apache.spark.examples.SparkPi
+
+mainJar: local:///opt/spark/examples/jars/spark-examples_2.11-2.4.0.jar
+
+sparkArgs:
+  []
+
+sparkDepsConfig:
+  {}
+
+sparkServiceAccount:
+  enabled: true
+  name: spark
+
+sparkDriverConfig:
+  cores: 1
+  coreLimit: "1200m"
+  memory: "512m"
+  labels:
+    version: 2.4.0
+  serviceAccount: spark
+
+sparkExecutorConfig:
+  cores: 1
+  instances: 1
+  memory: "512m"
+  labels:
+    version: 2.4.0
+  serviceAccount: spark
+
+sparkDriverEnvConfig:
+  {}
+  # mydest: link
+  # appname: test
+
+sparkExecutorEnvConfig:
+  {}
+
+keyVault:
+  name: 
+  spName: 
+  refreshInterval: 0
+
+sparkDriverEnvSecrets:
+  # ENV1: ENV1
+  # ENV2: ENV2
+
+sparkExecutorEnvSecrets:
+  ENV1: ENV1
+
+
+sparkConf:
+  {}
+  # spark.ui.port: "4045"
+  # spark.eventLog.enabled: "true"
+  # spark.eventLog.dir": "hdfs://hdfs-namenode-1:8020/spark/spark-events"
+
+hadoopConf:
+  "fs.gs.project.id": spark
+  "fs.gs.system.bucket": spark
+  # "google.cloud.auth.service.account.enable": true
+  # "google.cloud.auth.service.account.json.keyfile": /mnt/secrets/key.json
+
+sparkDynamicAllocation:
+  enabled: true
+  initialExecutors: 5
+  minExecutors: 5
+  maxExecutors: 20
+  shuffleTrackingTimeout: 60

@@ -1,0 +1,25 @@
+{{- if .Values.sparkServiceAccount.enabled }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Values.sparkServiceAccount.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    type: spark
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Values.sparkServiceAccount.name }}-rb
+  namespace: {{ .Release.Namespace }}
+  labels:
+    type: spark
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: spark-sa-rw
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Values.sparkServiceAccount.name }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}

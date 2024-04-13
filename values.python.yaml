@@ -1,0 +1,109 @@
+sparkVersion: 3.1.1
+
+image:
+  name: spark
+  tag: latest
+  registry: docker.io
+
+imagePullPolicy: Always
+
+restartPolicy: Never
+
+type: Python
+
+deployMode: cluster
+
+mainPyFile: local:///opt/spark/examples/src/main/python/pi.py
+
+pythonVersion: "3"
+
+sparkArgs:
+  []
+  # - "10"
+  # - "100"
+
+# https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/docs/user-guide.md#specifying-application-dependencies
+# -- Spark Application dependencies Configurations
+# THIS IS A OPTIONAL FIELD.
+sparkDepsConfig:
+  {}
+  # jars:
+  #   - local:///opt/spark-jars/gcs-connector.jar
+  #   - local:///opt/spark-jars/hadoop-aws.jar
+  # files:
+  #   - gs:///opt/spark-files/core-site.xml
+  #   - gs:///opt/spark-files/hdfs-site.xml
+  # repositories:
+  #   - https://repo1.maven.org/maven2/
+  # packages:
+  #   - com.google.cloud.spark:spark-bigquery-with-dependencies_2.11:0.13.1-beta
+  #   - com.amazonaws:aws-java-sdk:1.7.4
+  #   - org.apache.hadoop:hadoop-aws:2.7.3
+  # excludePackages:
+  #   - org.apache.spark:spark-tags_2.11:2.4.0
+
+sparkServiceAccount:
+  enabled: true
+  name: spark
+
+sparkDriverConfig:
+  cores: 1
+  coreLimit: "1200m"
+  memory: "512m"
+  labels:
+    version: 2.4.0
+  serviceAccount: spark
+
+sparkExecutorConfig:
+  cores: 1
+  instances: 1
+  memory: "512m"
+  labels:
+    version: 2.4.0
+  serviceAccount: spark
+
+sparkDriverEnvConfig:
+  {}
+  # mydest: link
+  # appname: test
+
+sparkExecutorEnvConfig:
+  {}
+  # mydest: links
+  # appname: tests
+
+keyVault:
+  name: 
+  spName: 
+  refreshInterval: 0
+
+sparkDriverEnvSecrets:
+  {}
+  # ENV1: ENV1
+  # ENV2: ENV2
+
+sparkExecutorEnvSecrets:
+  {}
+  # ENV1: ENV1
+  # ENV2: ENV2
+
+sparkConf:
+  {}
+  # spark.ui.port: "4045"
+  # spark.eventLog.enabled: "true"
+  # spark.eventLog.dir": "hdfs://hdfs-namenode-1:8020/spark/spark-events"
+
+hadoopConf:
+  {}
+  # "fs.gs.project.id": spark
+  # "fs.gs.system.bucket": spark
+  # "google.cloud.auth.service.account.enable": true
+  # "google.cloud.auth.service.account.json.keyfile": /mnt/secrets/key.json
+
+
+sparkDynamicAllocation:
+  enabled: true
+  initialExecutors: 5
+  minExecutors: 5
+  maxExecutors: 20
+  shuffleTrackingTimeout: 60
